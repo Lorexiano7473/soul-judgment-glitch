@@ -142,7 +142,7 @@ export default function SlotMachine({
                 SLOT DELLA DISPERAZIONE
               </h3>
               <p className="font-mono-h text-xs text-muted-foreground text-center mb-5">
-                &gt; gratis. ogni 30 secondi. la stanza decide.
+                &gt; gratis. ogni 6 secondi. la stanza decide.
               </p>
 
               <div
