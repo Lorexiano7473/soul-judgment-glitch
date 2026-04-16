@@ -90,6 +90,19 @@ export default function Index() {
     const done = setTimeout(() => {
       const v = getVerdict(name);
       setVerdict(v);
+      // Assegna coin
+      const key = normalize(name);
+      const isEaster = !!FIXED_JUDGMENTS[key];
+      const res = earnFromName(key, isEaster);
+      if (res.ok) {
+        setEarnNotice(
+          res.reason === "easter"
+            ? `+${res.amount} COIN — BONUS EASTER EGG`
+            : `+${res.amount} COIN CORROTTI`
+        );
+      } else if (res.reason === "cooldown" || res.reason === "cap") {
+        setEarnNotice("NON INGANNARE IL DESTINO");
+      }
       if (v.intense) {
         glitchSfx();
         setFlashWhite(true);
@@ -101,7 +114,7 @@ export default function Index() {
       clearInterval(lineTimer);
       clearTimeout(done);
     };
-  }, [stage, name]);
+  }, [stage, name, earnFromName]);
 
   const handleEnter = () => {
     jumpScare();
