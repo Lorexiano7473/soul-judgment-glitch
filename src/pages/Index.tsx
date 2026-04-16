@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MuteButton from "@/components/MuteButton";
+import HintsButton from "@/components/HintsButton";
 import GlitchTitle from "@/components/GlitchTitle";
 import {
   getVerdict,
@@ -161,6 +162,7 @@ export default function Index() {
   return (
     <main className={containerCls}>
       <MuteButton />
+      {stage === "home" && <HintsButton />}
 
       {/* White flash */}
       <AnimatePresence>
@@ -220,7 +222,9 @@ export default function Index() {
               )}
 
               <p className="mt-12 font-typewriter text-xs text-muted-foreground/60">
-                v0.6.6 — sessione monitorata
+                v0.7.1 — sessione monitorata
+                <br />
+                Diritti riservati a Lorexiano
               </p>
             </motion.section>
           )}
