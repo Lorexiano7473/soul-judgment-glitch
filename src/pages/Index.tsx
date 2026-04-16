@@ -152,6 +152,9 @@ export default function Index() {
     if (password === SECRET_PASSWORD) {
       localStorage.setItem("trofeo_rattesco", "1");
       setTrophyUnlocked(true);
+      // Bonus easter una tantum per il segreto
+      const res = earnFromName("__secret_capoziello__", true);
+      if (res.ok) setEarnNotice(`+${res.amount} COIN — BONUS SEGRETO`);
       glitchSfx();
       setFlashWhite(true);
       setTimeout(() => setFlashWhite(false), 100);
