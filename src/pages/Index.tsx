@@ -49,7 +49,7 @@ export default function Index() {
   const [logIndex, setLogIndex] = useState(0);
   const [earnNotice, setEarnNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { coins, earnFromName, spend, setCoins } = useCoins();
+  const { coins, earnFromName, spend, addCoins, setCoins } = useCoins();
 
   // SEO
   useEffect(() => {
@@ -259,9 +259,7 @@ export default function Index() {
               <div className="mt-8 flex flex-wrap gap-3 justify-center items-center">
                 <SlotMachine
                   coins={coins}
-                  onResult={(delta) => {
-                    setCoins(coins + delta);
-                  }}
+                  onResult={(delta) => addCoins(delta)}
                   onCursed={() => {
                     setCoins(0);
                     setFlashWhite(true);
