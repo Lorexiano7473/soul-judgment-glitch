@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import MuteButton from "@/components/MuteButton";
 import HintsButton from "@/components/HintsButton";
 import GlitchTitle from "@/components/GlitchTitle";
+import CoinCounter from "@/components/CoinCounter";
+import SlotMachine from "@/components/SlotMachine";
+import { useCoins } from "@/hooks/useCoins";
 import {
+  FIXED_JUDGMENTS,
   getVerdict,
   isValidName,
   normalize,
