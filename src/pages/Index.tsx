@@ -319,6 +319,13 @@ export default function Index() {
                 <br />
                 Diritti riservati a Lorexiano
               </p>
+
+              <button
+                onClick={() => setShowDisclaimer(true)}
+                className="mt-4 inline-flex items-center gap-2 font-typewriter text-[11px] text-muted-foreground/70 hover:text-blood underline-offset-4 hover:underline transition-colors"
+              >
+                <ScrollText size={12} /> Note Legali
+              </button>
             </motion.section>
           )}
 
