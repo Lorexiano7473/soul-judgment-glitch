@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import MuteButton from "@/components/MuteButton";
 import HintsButton from "@/components/HintsButton";
 import GlitchTitle from "@/components/GlitchTitle";
+import CoinCounter from "@/components/CoinCounter";
+import SlotMachine from "@/components/SlotMachine";
+import { useCoins } from "@/hooks/useCoins";
 import {
+  FIXED_JUDGMENTS,
   getVerdict,
   isValidName,
   normalize,
@@ -43,12 +47,20 @@ export default function Index() {
     return localStorage.getItem("trofeo_rattesco") === "1";
   });
   const [logIndex, setLogIndex] = useState(0);
+  const [earnNotice, setEarnNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { coins, earnFromName, spend, addCoins, setCoins } = useCoins();
 
   // SEO
   useEffect(() => {
     document.title = "Il Giudizio della Stanza — Verrai Valutato";
   }, []);
+
+  useEffect(() => {
+    if (!earnNotice) return;
+    const t = setTimeout(() => setEarnNotice(null), 2200);
+    return () => clearTimeout(t);
+  }, [earnNotice]);
 
   useEffect(() => {
     if (stage === "input" || stage === "secret-pass") {
@@ -78,6 +90,19 @@ export default function Index() {
     const done = setTimeout(() => {
       const v = getVerdict(name);
       setVerdict(v);
+      // Assegna coin
+      const key = normalize(name);
+      const isEaster = !!FIXED_JUDGMENTS[key];
+      const res = earnFromName(key, isEaster);
+      if (res.ok) {
+        setEarnNotice(
+          res.reason === "easter"
+            ? `+${res.amount} COIN — BONUS EASTER EGG`
+            : `+${res.amount} COIN CORROTTI`
+        );
+      } else if (res.reason === "cooldown" || res.reason === "cap") {
+        setEarnNotice("NON INGANNARE IL DESTINO");
+      }
       if (v.intense) {
         glitchSfx();
         setFlashWhite(true);
@@ -89,7 +114,7 @@ export default function Index() {
       clearInterval(lineTimer);
       clearTimeout(done);
     };
-  }, [stage, name]);
+  }, [stage, name, earnFromName]);
 
   const handleEnter = () => {
     jumpScare();
@@ -127,6 +152,9 @@ export default function Index() {
     if (password === SECRET_PASSWORD) {
       localStorage.setItem("trofeo_rattesco", "1");
       setTrophyUnlocked(true);
+      // Bonus easter una tantum per il segreto
+      const res = earnFromName("__secret_capoziello__", true);
+      if (res.ok) setEarnNotice(`+${res.amount} COIN — BONUS SEGRETO`);
       glitchSfx();
       setFlashWhite(true);
       setTimeout(() => setFlashWhite(false), 100);
@@ -162,7 +190,24 @@ export default function Index() {
   return (
     <main className={containerCls}>
       <MuteButton />
-      {stage === "home" && <HintsButton />}
+      <CoinCounter value={coins} />
+      {stage === "home" && (
+        <HintsButton coins={coins} onSpend={(amt) => spend(amt)} />
+      )}
+
+      {/* Earn notice */}
+      <AnimatePresence>
+        {earnNotice && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-[65] font-mono-h text-xs text-blood border border-blood/70 bg-black/80 px-3 py-1.5 glitch-intense"
+          >
+            {earnNotice}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* White flash */}
       <AnimatePresence>
@@ -176,6 +221,7 @@ export default function Index() {
           />
         )}
       </AnimatePresence>
+
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-10">
         <AnimatePresence mode="wait">
@@ -210,19 +256,30 @@ export default function Index() {
                 </button>
               </div>
 
-              {trophyUnlocked && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  onClick={() => setStage("trophies")}
-                  className="mt-10 inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors"
-                >
-                  <Trophy size={16} /> TROFEI [1]
-                </motion.button>
-              )}
+              <div className="mt-8 flex flex-wrap gap-3 justify-center items-center">
+                <SlotMachine
+                  coins={coins}
+                  onResult={(delta) => addCoins(delta)}
+                  onCursed={() => {
+                    setCoins(0);
+                    setFlashWhite(true);
+                    setTimeout(() => setFlashWhite(false), 120);
+                  }}
+                />
+                {trophyUnlocked && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onClick={() => setStage("trophies")}
+                    className="inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors"
+                  >
+                    <Trophy size={16} /> TROFEI [1]
+                  </motion.button>
+                )}
+              </div>
 
               <p className="mt-12 font-typewriter text-xs text-muted-foreground/60">
-                v0.7.1 — sessione monitorata
+                v0.8.0 — sessione monitorata
                 <br />
                 Diritti riservati a Lorexiano
               </p>
