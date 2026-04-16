@@ -4,7 +4,7 @@ import { Dices } from "lucide-react";
 import { glitchSfx, jumpScare } from "@/lib/audio";
 
 const SYMBOLS = ["☠", "👁", "🩸", "🕷", "✟", "⛧", "🦷"];
-const COOLDOWN_MS = 30_000;
+const COOLDOWN_MS = 6_000;
 
 type Outcome = {
   reward: number;
