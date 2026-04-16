@@ -47,12 +47,20 @@ export default function Index() {
     return localStorage.getItem("trofeo_rattesco") === "1";
   });
   const [logIndex, setLogIndex] = useState(0);
+  const [earnNotice, setEarnNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { coins, earnFromName, spend, setCoins } = useCoins();
 
   // SEO
   useEffect(() => {
     document.title = "Il Giudizio della Stanza — Verrai Valutato";
   }, []);
+
+  useEffect(() => {
+    if (!earnNotice) return;
+    const t = setTimeout(() => setEarnNotice(null), 2200);
+    return () => clearTimeout(t);
+  }, [earnNotice]);
 
   useEffect(() => {
     if (stage === "input" || stage === "secret-pass") {
