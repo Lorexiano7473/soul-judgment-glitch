@@ -11,7 +11,15 @@ const HINTS = [
   "Il codice è nascosto nel brainrot di un piccolo numero... 67, centra con i counter della Antonella.",
 ];
 
-export default function HintsButton() {
+const SPIN_COST = 30;
+
+export default function HintsButton({
+  coins,
+  onSpend,
+}: {
+  coins: number;
+  onSpend: (amount: number) => boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(false);
   const [spinning, setSpinning] = useState(false);
@@ -20,9 +28,12 @@ export default function HintsButton() {
   const [revealed, setRevealed] = useState<string | null>(null);
 
   const slice = 360 / HINTS.length;
+  const canAfford = coins >= SPIN_COST;
 
   const spin = () => {
     if (spinning) return;
+    if (!canAfford) return;
+    if (!onSpend(SPIN_COST)) return;
     setRevealed(null);
     setSpinning(true);
     const idx = Math.floor(Math.random() * HINTS.length);
@@ -139,11 +150,18 @@ export default function HintsButton() {
 
               <button
                 onClick={spin}
-                disabled={spinning}
-                className="btn-horror w-full mt-6 disabled:opacity-50"
+                disabled={spinning || !canAfford}
+                className="btn-horror w-full mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {spinning ? "il sistema sceglie..." : "Gira la Ruota"}
+                {spinning
+                  ? "il sistema sceglie..."
+                  : !canAfford
+                  ? `PAGARE IN SANGUE (${SPIN_COST} COIN)`
+                  : `Gira la Ruota (${SPIN_COST} coin)`}
               </button>
+              <p className="font-mono-h text-[10px] text-muted-foreground text-center mt-2">
+                saldo: <span className="text-blood">{coins}</span> coin corrotti
+              </p>
 
               <div className="mt-5 min-h-[80px] border border-ash/40 bg-black/60 p-4">
                 <AnimatePresence mode="wait">
