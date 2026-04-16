@@ -256,19 +256,32 @@ export default function Index() {
                 </button>
               </div>
 
-              {trophyUnlocked && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  onClick={() => setStage("trophies")}
-                  className="mt-10 inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors"
-                >
-                  <Trophy size={16} /> TROFEI [1]
-                </motion.button>
-              )}
+              <div className="mt-8 flex flex-wrap gap-3 justify-center items-center">
+                <SlotMachine
+                  coins={coins}
+                  onResult={(delta) => {
+                    setCoins(coins + delta);
+                  }}
+                  onCursed={() => {
+                    setCoins(0);
+                    setFlashWhite(true);
+                    setTimeout(() => setFlashWhite(false), 120);
+                  }}
+                />
+                {trophyUnlocked && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onClick={() => setStage("trophies")}
+                    className="inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors"
+                  >
+                    <Trophy size={16} /> TROFEI [1]
+                  </motion.button>
+                )}
+              </div>
 
               <p className="mt-12 font-typewriter text-xs text-muted-foreground/60">
-                v0.7.1 — sessione monitorata
+                v0.8.0 — sessione monitorata
                 <br />
                 Diritti riservati a Lorexiano
               </p>
