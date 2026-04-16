@@ -5,6 +5,8 @@ import HintsButton from "@/components/HintsButton";
 import GlitchTitle from "@/components/GlitchTitle";
 import CoinCounter from "@/components/CoinCounter";
 import SlotMachine from "@/components/SlotMachine";
+import DisclaimerModal from "@/components/DisclaimerModal";
+import { ScrollText } from "lucide-react";
 import { useCoins } from "@/hooks/useCoins";
 import {
   FIXED_JUDGMENTS,
@@ -48,6 +50,11 @@ export default function Index() {
   });
   const [logIndex, setLogIndex] = useState(0);
   const [earnNotice, setEarnNotice] = useState<string | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState<boolean>(
+    () => localStorage.getItem("disclaimer_accepted") === "1"
+  );
+  const [pendingEnter, setPendingEnter] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { coins, earnFromName, spend, addCoins, setCoins } = useCoins();
 
@@ -117,10 +124,33 @@ export default function Index() {
   }, [stage, name, earnFromName]);
 
   const handleEnter = () => {
+    if (!disclaimerAccepted) {
+      setPendingEnter(true);
+      setShowDisclaimer(true);
+      return;
+    }
     jumpScare();
     setFlashWhite(true);
     setTimeout(() => setFlashWhite(false), 80);
     setStage("input");
+  };
+
+  const handleDisclaimerAccept = () => {
+    localStorage.setItem("disclaimer_accepted", "1");
+    setDisclaimerAccepted(true);
+    setShowDisclaimer(false);
+    if (pendingEnter) {
+      setPendingEnter(false);
+      jumpScare();
+      setFlashWhite(true);
+      setTimeout(() => setFlashWhite(false), 80);
+      setStage("input");
+    }
+  };
+
+  const handleDisclaimerClose = () => {
+    setShowDisclaimer(false);
+    setPendingEnter(false);
   };
 
   const handleEscape = () => {
@@ -194,6 +224,12 @@ export default function Index() {
       {stage === "home" && (
         <HintsButton coins={coins} onSpend={(amt) => spend(amt)} />
       )}
+
+      <DisclaimerModal
+        open={showDisclaimer}
+        onAccept={handleDisclaimerAccept}
+        onClose={handleDisclaimerClose}
+      />
 
       {/* Earn notice */}
       <AnimatePresence>
@@ -283,6 +319,13 @@ export default function Index() {
                 <br />
                 Diritti riservati a Lorexiano
               </p>
+
+              <button
+                onClick={() => setShowDisclaimer(true)}
+                className="mt-4 inline-flex items-center gap-2 font-typewriter text-[11px] text-muted-foreground/70 hover:text-blood underline-offset-4 hover:underline transition-colors"
+              >
+                <ScrollText size={12} /> Note Legali
+              </button>
             </motion.section>
           )}
 
