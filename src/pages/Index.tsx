@@ -190,7 +190,24 @@ export default function Index() {
   return (
     <main className={containerCls}>
       <MuteButton />
-      {stage === "home" && <HintsButton />}
+      <CoinCounter value={coins} />
+      {stage === "home" && (
+        <HintsButton coins={coins} onSpend={(amt) => spend(amt)} />
+      )}
+
+      {/* Earn notice */}
+      <AnimatePresence>
+        {earnNotice && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-16 left-1/2 -translate-x-1/2 z-[65] font-mono-h text-xs text-blood border border-blood/70 bg-black/80 px-3 py-1.5 glitch-intense"
+          >
+            {earnNotice}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* White flash */}
       <AnimatePresence>
@@ -204,6 +221,7 @@ export default function Index() {
           />
         )}
       </AnimatePresence>
+
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-10">
         <AnimatePresence mode="wait">
