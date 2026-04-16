@@ -2,95 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 78%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 78%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 78%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 75% 32%;
+    --primary-foreground: 0 0% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 78%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 75% 32%;
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 90% 45%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 15%;
+    --input: 0 0% 12%;
+    --ring: 0 75% 32%;
 
-    --radius: 0.5rem;
+    --blood: 0 80% 28%;
+    --blood-glow: 0 100% 45%;
+    --ash: 0 0% 22%;
+    --terminal: 120 30% 60%;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 0.125rem;
   }
 }
 
@@ -98,8 +45,178 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
-  body {
+  html, body, #root {
     @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', monospace;
+    -webkit-font-smoothing: none;
+    overflow-x: hidden;
   }
+  ::selection {
+    background: hsl(var(--blood));
+    color: hsl(var(--primary-foreground));
+  }
+  input, button {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  .font-display { font-family: 'VT323', monospace; letter-spacing: 0.04em; }
+  .font-typewriter { font-family: 'Special Elite', 'Courier New', monospace; }
+  .font-mono-h { font-family: 'JetBrains Mono', monospace; }
+
+  /* Film grain */
+  .grain::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/></svg>");
+    animation: grain 0.6s steps(6) infinite;
+    mix-blend-mode: overlay;
+  }
+
+  /* Scanlines */
+  .scanlines::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 40;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      hsla(0, 0%, 0%, 0.35) 3px,
+      hsla(0, 0%, 0%, 0.35) 3px
+    );
+    mix-blend-mode: multiply;
+  }
+
+  .vignette {
+    box-shadow: inset 0 0 200px 60px hsla(0,0%,0%,0.95);
+  }
+
+  .glitch-text {
+    position: relative;
+    display: inline-block;
+    color: hsl(var(--foreground));
+    text-shadow: 0 0 1px hsl(var(--blood-glow) / 0.3);
+  }
+  .glitch-text::before,
+  .glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .glitch-text::before {
+    color: hsl(var(--blood-glow));
+    transform: translate(-2px, 0);
+    clip-path: inset(0 0 70% 0);
+    animation: glitch-top 3.4s infinite steps(1);
+    mix-blend-mode: screen;
+  }
+  .glitch-text::after {
+    color: hsl(195 100% 50%);
+    transform: translate(2px, 0);
+    clip-path: inset(70% 0 0 0);
+    animation: glitch-bottom 2.8s infinite steps(1);
+    mix-blend-mode: screen;
+  }
+
+  .glitch-intense {
+    animation: glitch-shake 0.18s steps(2) infinite, glitch-rgb 0.4s steps(3) infinite;
+  }
+
+  .text-tremor {
+    animation: tremor 2.4s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  .terminal-cursor::after {
+    content: '_';
+    color: hsl(var(--blood-glow));
+    animation: blink 1s steps(2) infinite;
+    margin-left: 2px;
+  }
+
+  .crt-screen {
+    background:
+      radial-gradient(ellipse at center, hsl(0 0% 6%) 0%, hsl(0 0% 2%) 100%);
+  }
+
+  .btn-horror {
+    @apply font-display text-2xl tracking-widest uppercase border px-8 py-4 transition-all duration-200;
+    border-color: hsl(var(--ash));
+    background: hsl(0 0% 6%);
+    color: hsl(var(--foreground));
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-horror:hover {
+    border-color: hsl(var(--blood));
+    color: hsl(var(--blood-glow));
+    text-shadow: 0 0 8px hsl(var(--blood-glow) / 0.7);
+    box-shadow: 0 0 20px hsl(var(--blood) / 0.4) inset, 0 0 30px hsl(var(--blood) / 0.25);
+  }
+  .btn-horror:active { transform: translate(1px,1px); }
+
+  .flicker { animation: flicker 4s linear infinite; }
+}
+
+@layer utilities {
+  .text-blood { color: hsl(var(--blood-glow)); }
+  .bg-blood { background-color: hsl(var(--blood)); }
+  .border-blood { border-color: hsl(var(--blood)); }
+  .text-ash { color: hsl(var(--ash)); }
+}
+
+@keyframes grain {
+  0%,100%   { transform: translate(0,0); }
+  10%  { transform: translate(-5%,-10%); }
+  30%  { transform: translate(3%,-15%); }
+  50%  { transform: translate(12%,9%); }
+  70%  { transform: translate(-9%,4%); }
+  90%  { transform: translate(8%,-3%); }
+}
+
+@keyframes glitch-top {
+  0%,90%,100% { transform: translate(-2px,0); }
+  92% { transform: translate(-6px,-2px); clip-path: inset(10% 0 60% 0); }
+  94% { transform: translate(4px,1px); clip-path: inset(30% 0 40% 0); }
+  96% { transform: translate(-3px,2px); clip-path: inset(5% 0 80% 0); }
+}
+@keyframes glitch-bottom {
+  0%,88%,100% { transform: translate(2px,0); }
+  90% { transform: translate(6px,2px); clip-path: inset(60% 0 5% 0); }
+  93% { transform: translate(-4px,-1px); clip-path: inset(80% 0 5% 0); }
+  97% { transform: translate(3px,1px); clip-path: inset(50% 0 20% 0); }
+}
+@keyframes glitch-shake {
+  0%,100% { transform: translate(0,0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(2px, -3px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(3px, 1px); }
+}
+@keyframes glitch-rgb {
+  0%,100% { text-shadow: -2px 0 hsl(var(--blood-glow)), 2px 0 cyan; }
+  50%     { text-shadow:  2px 0 hsl(var(--blood-glow)), -2px 0 cyan; }
+}
+@keyframes tremor {
+  0%,100% { transform: translate(0,0) rotate(0); }
+  25% { transform: translate(0.5px,-0.5px) rotate(-0.3deg); }
+  50% { transform: translate(-0.5px,0.5px) rotate(0.3deg); }
+  75% { transform: translate(0.5px,0.5px) rotate(-0.2deg); }
+}
+@keyframes blink { 0%,49% { opacity:1 } 50%,100% { opacity:0 } }
+@keyframes flicker {
+  0%,98%,100% { opacity: 1; }
+  92% { opacity: 0.6; }
+  94% { opacity: 0.2; }
+  95% { opacity: 0.9; }
+  96% { opacity: 0.4; }
 }
