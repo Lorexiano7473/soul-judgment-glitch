@@ -50,6 +50,15 @@
     font-family: 'JetBrains Mono', monospace;
     -webkit-font-smoothing: none;
     overflow-x: hidden;
+    background: #000;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior: none;
   }
   ::selection {
     background: hsl(var(--blood));
@@ -57,6 +66,45 @@
   }
   input, button {
     font-family: inherit;
+  }
+
+  /* Hide Lovable / build watermark badges globally */
+  #lovable-badge,
+  [data-lovable-badge],
+  a[href*="lovable.dev"],
+  a[href*="lovable.app"][target="_blank"],
+  iframe[src*="lovable"],
+  div[class*="lovable-badge" i],
+  div[id*="lovable-badge" i],
+  [class*="BuiltWith" i],
+  [aria-label*="built with lovable" i],
+  [aria-label*="edit with lovable" i] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Mobile / low-power performance overrides:
+   disable heavy filters, blurs, and continuous glitch animations on small screens
+   and for users who prefer reduced motion. */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  .grain::before { display: none !important; }
+  .scanlines::after { display: none !important; }
+  .vignette { box-shadow: inset 0 0 80px 20px hsla(0,0%,0%,0.85); }
+  .glitch-text::before,
+  .glitch-text::after { animation: none !important; display: none !important; }
+  .glitch-intense { animation: none !important; }
+  .text-tremor { animation: none !important; }
+  .flicker { animation: none !important; }
+  .backdrop-blur-sm,
+  .backdrop-blur,
+  .backdrop-blur-md,
+  .backdrop-blur-lg { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .btn-horror:hover {
+    box-shadow: 0 0 8px hsl(var(--blood) / 0.3) inset;
+    text-shadow: 0 0 4px hsl(var(--blood-glow) / 0.5);
   }
 }
 

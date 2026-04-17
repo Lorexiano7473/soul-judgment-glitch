@@ -75,9 +75,14 @@ export default function Index() {
     }
   }, [stage]);
 
-  // Sporadic global glitch
+  // Sporadic global glitch — disabled on mobile / reduced motion for perf
   const [globalGlitch, setGlobalGlitch] = useState(false);
   useEffect(() => {
+    const isLowPower =
+      typeof window !== "undefined" &&
+      (window.matchMedia("(max-width: 768px)").matches ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    if (isLowPower) return;
     const id = setInterval(() => {
       if (Math.random() < 0.15) {
         setGlobalGlitch(true);
