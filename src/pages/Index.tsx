@@ -299,6 +299,20 @@ export default function Index() {
         )}
       </AnimatePresence>
 
+      {/* Trophy notice */}
+      <AnimatePresence>
+        {trophyNotice && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-28 left-1/2 -translate-x-1/2 z-[66] font-creepster text-xl text-blood border border-blood bg-black/90 px-4 py-2 glitch-intense text-center"
+          >
+            {trophyNotice}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* White flash */}
       <AnimatePresence>
         {flashWhite && (
@@ -325,11 +339,14 @@ export default function Index() {
               transition={{ duration: 0.6 }}
               className="text-center max-w-2xl w-full"
             >
-              <h1 className="text-5xl sm:text-7xl md:text-8xl mb-4 flicker">
+              <h1
+                className="text-5xl sm:text-7xl md:text-8xl mb-4 flicker font-creepster cursor-pointer select-none"
+                onClick={handleTitleClick}
+              >
                 <GlitchTitle text="IL GIUDIZIO" />
               </h1>
               <h2 className="text-3xl sm:text-5xl md:text-6xl mb-10 text-ash">
-                <span className="font-display tracking-widest text-tremor">DELLA STANZA</span>
+                <span className="font-creepster tracking-widest text-tremor">DELLA STANZA</span>
               </h2>
               <p className="font-typewriter text-sm sm:text-base text-muted-foreground mb-12 max-w-md mx-auto leading-relaxed">
                 Entri da solo. Verrai pesato.
@@ -363,7 +380,7 @@ export default function Index() {
                     onClick={() => setStage("trophies")}
                     className="inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors"
                   >
-                    <Trophy size={16} /> TROFEI [1]
+                    <Trophy size={16} /> BACHECA DEI PECCATI [{unlockedTrophies.size}/{TROPHIES.length}]
                   </motion.button>
                 )}
               </div>
