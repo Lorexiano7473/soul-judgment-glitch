@@ -13,7 +13,7 @@ import {
   getVerdict,
   isValidName,
   normalize,
-  SALT_TRIGGER,
+  isSaltTrigger,
   SECRET_PASSWORD,
   SECRET_TRIGGER,
   type Verdict,
@@ -207,24 +207,34 @@ export default function Index() {
 
   const handleAnalyze = () => {
     setError(null);
-    const v = isValidName(name);
-    if (!v.ok) {
-      setError(v.reason || "INPUT NON VALIDO");
-      glitchSfx();
-      return;
-    }
     const key = normalize(name);
-    // Trigger minigioco "sale a cascata"
-    if (key === SALT_TRIGGER) {
+    console.log("[Giudizio] handleAnalyze →", { raw: name, normalized: key });
+
+    // PRIORITÀ ASSOLUTA: trigger speciali bypassano la validazione
+    if (isSaltTrigger(key)) {
+      console.log("[Giudizio] SALT trigger riconosciuto → apro minigioco");
       glitchSfx();
       setStage("salt-game");
       return;
     }
-    // Trigger secret prompt
     if (key === SECRET_TRIGGER) {
+      console.log("[Giudizio] SECRET trigger riconosciuto");
       glitchSfx();
       setPassword("");
       setStage("secret-pass");
+      return;
+    }
+    if (FIXED_JUDGMENTS[key]) {
+      console.log("[Giudizio] Easter egg fisso riconosciuto:", key);
+      setStage("analyzing");
+      return;
+    }
+
+    const v = isValidName(name);
+    if (!v.ok) {
+      console.log("[Giudizio] Nome non valido:", v.reason);
+      setError(v.reason || "INPUT NON VALIDO");
+      glitchSfx();
       return;
     }
     setStage("analyzing");

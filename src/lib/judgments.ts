@@ -116,8 +116,12 @@ export const FIXED_JUDGMENTS: Record<string, Verdict> = {
   },
 };
 
-// Trigger easter egg minigioco "sale a cascata"
-export const SALT_TRIGGER = "sale a cascata";
+// Trigger easter egg minigioco "sale a cascata" (accetta anche "cascate")
+export const SALT_TRIGGERS = ["sale a cascata", "sale a cascate"];
+export const SALT_TRIGGER = SALT_TRIGGERS[0];
+export function isSaltTrigger(key: string) {
+  return SALT_TRIGGERS.includes(key);
+}
 
 // Nome che attiva il prompt password segreto
 export const SECRET_TRIGGER = "capoziello counterato dalla antonella";
@@ -161,7 +165,7 @@ export function isValidName(name: string): { ok: boolean; reason?: string } {
   const trimmed = name.trim();
   if (trimmed.length < 2) return { ok: false, reason: "INPUT TROPPO BREVE" };
   if (trimmed.length > 60) return { ok: false, reason: "INPUT TROPPO LUNGO" };
-  if (!/^[a-zA-ZàèéìòùÀÈÉÌÒÙ',. ]+$/.test(trimmed))
+  if (!/^[a-zA-ZàèéìòùÀÈÉÌÒÙ',.\-,;|/ ]+$/.test(trimmed))
     return { ok: false, reason: "CARATTERI NON AMMESSI" };
   // detect mash: 4+ consonanti consecutive senza vocali
   if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(trimmed))
