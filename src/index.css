@@ -119,6 +119,15 @@
   .font-display { font-family: 'VT323', monospace; letter-spacing: 0.04em; }
   .font-typewriter { font-family: 'Special Elite', 'Courier New', monospace; }
   .font-mono-h { font-family: 'JetBrains Mono', monospace; }
+  .font-creepster {
+    font-family: 'Creepster', 'VT323', cursive;
+    letter-spacing: 0.06em;
+    text-shadow:
+      0 0 4px hsl(var(--blood-glow) / 0.6),
+      2px 0 0 hsl(var(--blood) / 0.7),
+      -2px 0 0 hsl(195 100% 50% / 0.35),
+      0 0 18px hsl(var(--blood) / 0.4);
+  }
 
   /* Film grain */
   .grain::before {
@@ -274,4 +283,26 @@
   94% { opacity: 0.2; }
   95% { opacity: 0.9; }
   96% { opacity: 0.4; }
+}
+
+/* === Salt minigame: shake transform-only, GPU friendly === */
+@keyframes salt-shake-1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-2px,2px)} }
+@keyframes salt-shake-2 { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-4px,3px)} 75%{transform:translate(4px,-3px)} }
+@keyframes salt-shake-3 { 0%,100%{transform:translate(0,0)} 20%{transform:translate(-7px,5px)} 50%{transform:translate(8px,-6px)} 80%{transform:translate(-6px,-4px)} }
+.salt-shake-1 { animation: salt-shake-1 0.18s steps(2) infinite; will-change: transform; }
+.salt-shake-2 { animation: salt-shake-2 0.12s steps(2) infinite; will-change: transform; }
+.salt-shake-3 { animation: salt-shake-3 0.08s steps(2) infinite; will-change: transform; }
+
+@keyframes salt-fall {
+  0%   { transform: translate(var(--dx,0px), 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx,0px), var(--dy,400px)) scale(0.6); opacity: 0; }
+}
+.salt-particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: salt-fall var(--dur,1s) linear forwards;
+  will-change: transform, opacity;
 }
