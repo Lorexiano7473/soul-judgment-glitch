@@ -638,22 +638,42 @@ export default function Index() {
               exit={{ opacity: 0 }}
               className="w-full max-w-2xl"
             >
-              <h2 className="font-display text-4xl sm:text-5xl text-blood mb-8 text-center">
-                <GlitchTitle text="TROFEI" />
+              <h2 className="font-creepster text-4xl sm:text-6xl text-blood mb-2 text-center">
+                <GlitchTitle text="BACHECA DEI PECCATI" />
               </h2>
-              <div className="border border-blood bg-black/80 p-6 flex items-start gap-4">
-                <div className="text-blood">
-                  <Trophy size={48} />
-                </div>
-                <div>
-                  <h3 className="font-display text-2xl text-blood mb-1">
-                    Trofeo Rattesco
-                  </h3>
-                  <p className="font-typewriter text-sm text-muted-foreground">
-                    Hai pronunciato il nome proibito e superato il muro della password.
-                    Capoziello è stato ufficialmente counterato dalla Antonella.
-                  </p>
-                </div>
+              <p className="font-mono-h text-xs text-muted-foreground text-center mb-8">
+                &gt; {unlockedTrophies.size} / {TROPHIES.length} sbloccati
+              </p>
+              <div className="grid gap-4">
+                {TROPHIES.map((t) => {
+                  const got = unlockedTrophies.has(t.id);
+                  return (
+                    <div
+                      key={t.id}
+                      className={`border p-5 flex items-start gap-4 transition-colors ${
+                        got
+                          ? "border-blood bg-black/80"
+                          : "border-ash/40 bg-black/60 opacity-60"
+                      }`}
+                    >
+                      <div className={got ? "text-blood" : "text-ash"}>
+                        <Trophy size={40} />
+                      </div>
+                      <div>
+                        <h3
+                          className={`font-creepster text-2xl mb-1 ${
+                            got ? "text-blood" : "text-ash"
+                          }`}
+                        >
+                          {got ? t.name : "??? bloccato ???"}
+                        </h3>
+                        <p className="font-typewriter text-sm text-muted-foreground">
+                          {got ? t.description : "Trofeo non ancora sbloccato. Continua a peccare."}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="mt-8 text-center">
                 <button onClick={reset} className="btn-horror">
