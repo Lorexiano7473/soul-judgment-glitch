@@ -13,7 +13,7 @@ import {
   getVerdict,
   isValidName,
   normalize,
-  SALT_TRIGGER,
+  isSaltTrigger,
   SECRET_PASSWORD,
   SECRET_TRIGGER,
   type Verdict,
