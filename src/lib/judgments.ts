@@ -165,7 +165,7 @@ export function isValidName(name: string): { ok: boolean; reason?: string } {
   const trimmed = name.trim();
   if (trimmed.length < 2) return { ok: false, reason: "INPUT TROPPO BREVE" };
   if (trimmed.length > 60) return { ok: false, reason: "INPUT TROPPO LUNGO" };
-  if (!/^[a-zA-ZàèéìòùÀÈÉÌÒÙ',.\- ]+$/.test(trimmed))
+  if (!/^[a-zA-ZàèéìòùÀÈÉÌÒÙ',.\-,;|/ ]+$/.test(trimmed))
     return { ok: false, reason: "CARATTERI NON AMMESSI" };
   // detect mash: 4+ consonanti consecutive senza vocali
   if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(trimmed))
