@@ -13,12 +13,26 @@ import {
   getVerdict,
   isValidName,
   normalize,
+  SALT_TRIGGER,
   SECRET_PASSWORD,
   SECRET_TRIGGER,
   type Verdict,
 } from "@/lib/judgments";
 import { glitchSfx, jumpScare, typeSfx } from "@/lib/audio";
 import { Trophy } from "lucide-react";
+import {
+  TROPHIES,
+  type TrophyId,
+  bumpMenuReturn,
+  bumpTitleClicks,
+  ETERNAL_THRESHOLD,
+  TITLE_CLICKS_THRESHOLD,
+  getUnlocked,
+  resetTitleClicks,
+  unlockTrophy,
+} from "@/lib/trophies";
+import { hapticTrophy, hapticGlitch } from "@/lib/haptics";
+import SaltGame from "@/components/SaltGame";
 
 type Stage =
   | "home"
@@ -27,7 +41,8 @@ type Stage =
   | "secret-pass"
   | "analyzing"
   | "result"
-  | "trophies";
+  | "trophies"
+  | "salt-game";
 
 const ANALYSIS_LINES = [
   "> connessione al soggetto...",
@@ -45,11 +60,10 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [flashWhite, setFlashWhite] = useState(false);
-  const [trophyUnlocked, setTrophyUnlocked] = useState<boolean>(() => {
-    return localStorage.getItem("trofeo_rattesco") === "1";
-  });
+  const [unlockedTrophies, setUnlockedTrophies] = useState<Set<TrophyId>>(() => getUnlocked());
   const [logIndex, setLogIndex] = useState(0);
   const [earnNotice, setEarnNotice] = useState<string | null>(null);
+  const [trophyNotice, setTrophyNotice] = useState<string | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState<boolean>(
     () => localStorage.getItem("disclaimer_accepted") === "1"
@@ -57,6 +71,32 @@ export default function Index() {
   const [pendingEnter, setPendingEnter] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { coins, earnFromName, spend, addCoins, setCoins } = useCoins();
+
+  const trophyUnlocked = unlockedTrophies.size > 0;
+
+  const tryUnlock = (id: TrophyId) => {
+    if (unlockTrophy(id)) {
+      setUnlockedTrophies(getUnlocked());
+      const def = TROPHIES.find((t) => t.id === id);
+      setTrophyNotice(`★ TROFEO: ${def?.name.toUpperCase()} ★`);
+      hapticTrophy();
+      glitchSfx();
+      setTimeout(() => setTrophyNotice(null), 2600);
+      return true;
+    }
+    return false;
+  };
+
+  const handleTitleClick = () => {
+    const n = bumpTitleClicks();
+    if (n >= TITLE_CLICKS_THRESHOLD) {
+      resetTitleClicks();
+      tryUnlock("occhio_glitch");
+      setFlashWhite(true);
+      setTimeout(() => setFlashWhite(false), 100);
+      hapticGlitch();
+    }
+  };
 
   // SEO
   useEffect(() => {
@@ -173,8 +213,15 @@ export default function Index() {
       glitchSfx();
       return;
     }
+    const key = normalize(name);
+    // Trigger minigioco "sale a cascata"
+    if (key === SALT_TRIGGER) {
+      glitchSfx();
+      setStage("salt-game");
+      return;
+    }
     // Trigger secret prompt
-    if (normalize(name) === SECRET_TRIGGER) {
+    if (key === SECRET_TRIGGER) {
       glitchSfx();
       setPassword("");
       setStage("secret-pass");
@@ -185,8 +232,7 @@ export default function Index() {
 
   const handleSecretSubmit = () => {
     if (password === SECRET_PASSWORD) {
-      localStorage.setItem("trofeo_rattesco", "1");
-      setTrophyUnlocked(true);
+      tryUnlock("rattesco");
       // Bonus easter una tantum per il segreto
       const res = earnFromName("__secret_capoziello__", true);
       if (res.ok) setEarnNotice(`+${res.amount} COIN — BONUS SEGRETO`);
@@ -212,6 +258,9 @@ export default function Index() {
     setError(null);
     setVerdict(null);
     setStage("home");
+    // Eterno Ritorno: ogni volta che si torna al menu
+    const n = bumpMenuReturn();
+    if (n > ETERNAL_THRESHOLD) tryUnlock("eterno_ritorno");
   };
 
   const containerCls = useMemo(
@@ -250,6 +299,20 @@ export default function Index() {
         )}
       </AnimatePresence>
 
+      {/* Trophy notice */}
+      <AnimatePresence>
+        {trophyNotice && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-28 left-1/2 -translate-x-1/2 z-[66] font-creepster text-xl text-blood border border-blood bg-black/90 px-4 py-2 glitch-intense text-center"
+          >
+            {trophyNotice}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* White flash */}
       <AnimatePresence>
         {flashWhite && (
@@ -276,11 +339,14 @@ export default function Index() {
               transition={{ duration: 0.6 }}
               className="text-center max-w-2xl w-full"
             >
-              <h1 className="text-5xl sm:text-7xl md:text-8xl mb-4 flicker">
+              <h1
+                className="text-5xl sm:text-7xl md:text-8xl mb-4 flicker font-creepster cursor-pointer select-none"
+                onClick={handleTitleClick}
+              >
                 <GlitchTitle text="IL GIUDIZIO" />
               </h1>
               <h2 className="text-3xl sm:text-5xl md:text-6xl mb-10 text-ash">
-                <span className="font-display tracking-widest text-tremor">DELLA STANZA</span>
+                <span className="font-creepster tracking-widest text-tremor">DELLA STANZA</span>
               </h2>
               <p className="font-typewriter text-sm sm:text-base text-muted-foreground mb-12 max-w-md mx-auto leading-relaxed">
                 Entri da solo. Verrai pesato.
@@ -314,7 +380,7 @@ export default function Index() {
                     onClick={() => setStage("trophies")}
                     className="inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors"
                   >
-                    <Trophy size={16} /> TROFEI [1]
+                    <Trophy size={16} /> BACHECA DEI PECCATI [{unlockedTrophies.size}/{TROPHIES.length}]
                   </motion.button>
                 )}
               </div>
@@ -572,22 +638,42 @@ export default function Index() {
               exit={{ opacity: 0 }}
               className="w-full max-w-2xl"
             >
-              <h2 className="font-display text-4xl sm:text-5xl text-blood mb-8 text-center">
-                <GlitchTitle text="TROFEI" />
+              <h2 className="font-creepster text-4xl sm:text-6xl text-blood mb-2 text-center">
+                <GlitchTitle text="BACHECA DEI PECCATI" />
               </h2>
-              <div className="border border-blood bg-black/80 p-6 flex items-start gap-4">
-                <div className="text-blood">
-                  <Trophy size={48} />
-                </div>
-                <div>
-                  <h3 className="font-display text-2xl text-blood mb-1">
-                    Trofeo Rattesco
-                  </h3>
-                  <p className="font-typewriter text-sm text-muted-foreground">
-                    Hai pronunciato il nome proibito e superato il muro della password.
-                    Capoziello è stato ufficialmente counterato dalla Antonella.
-                  </p>
-                </div>
+              <p className="font-mono-h text-xs text-muted-foreground text-center mb-8">
+                &gt; {unlockedTrophies.size} / {TROPHIES.length} sbloccati
+              </p>
+              <div className="grid gap-4">
+                {TROPHIES.map((t) => {
+                  const got = unlockedTrophies.has(t.id);
+                  return (
+                    <div
+                      key={t.id}
+                      className={`border p-5 flex items-start gap-4 transition-colors ${
+                        got
+                          ? "border-blood bg-black/80"
+                          : "border-ash/40 bg-black/60 opacity-60"
+                      }`}
+                    >
+                      <div className={got ? "text-blood" : "text-ash"}>
+                        <Trophy size={40} />
+                      </div>
+                      <div>
+                        <h3
+                          className={`font-creepster text-2xl mb-1 ${
+                            got ? "text-blood" : "text-ash"
+                          }`}
+                        >
+                          {got ? t.name : "??? bloccato ???"}
+                        </h3>
+                        <p className="font-typewriter text-sm text-muted-foreground">
+                          {got ? t.description : "Trofeo non ancora sbloccato. Continua a peccare."}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="mt-8 text-center">
                 <button onClick={reset} className="btn-horror">
@@ -598,6 +684,18 @@ export default function Index() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Salt minigame fullscreen */}
+      <AnimatePresence>
+        {stage === "salt-game" && (
+          <SaltGame
+            key="salt"
+            onClose={reset}
+            onWin={() => tryUnlock("sale_cazzo_di_cane")}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
+

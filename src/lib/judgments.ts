@@ -100,7 +100,24 @@ export const FIXED_JUDGMENTS: Record<string, Verdict> = {
     rating: "?/10",
     comment: "PLACEHOLDER — sostituisci con valutazione personalizzata.",
   },
+
+  // === EASTER EGG MULTI-NOME (separati da virgole/spazi) ===
+  "molteni sbattere trattoria": {
+    rating: "10/10",
+    comment:
+      "Il chad delle trattorie sbatte tutto e non gliene frega niente di quello che gli dicono. I suoi studenti sono i migliori e chissà perché.",
+    intense: true,
+  },
+  "maria prizepool puttana moltrasio": {
+    rating: "DISONESTA",
+    comment:
+      "Arrivata a settembre 2025 e domina le sue scarpe ballerine con il suo sito, e a volte ha dei comportamenti non adeguati e viene frustata dal Chad. Il nome 'prizepool' solo 2 persone sanno da dove arriva e non si sa se lo riveleranno.",
+    intense: true,
+  },
 };
+
+// Trigger easter egg minigioco "sale a cascata"
+export const SALT_TRIGGER = "sale a cascata";
 
 // Nome che attiva il prompt password segreto
 export const SECRET_TRIGGER = "capoziello counterato dalla antonella";
@@ -122,7 +139,12 @@ const CRYPTIC_COMMENTS = [
 ];
 
 export function normalize(s: string) {
-  return s.trim().toLowerCase().replace(/\s+/g, " ");
+  // sostituisce virgole/punti/separatori con spazio per matchare i trigger multi-nome
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/[,;./|]+/g, " ")
+    .replace(/\s+/g, " ");
 }
 
 export function getVerdict(rawName: string): Verdict {
@@ -139,7 +161,7 @@ export function isValidName(name: string): { ok: boolean; reason?: string } {
   const trimmed = name.trim();
   if (trimmed.length < 2) return { ok: false, reason: "INPUT TROPPO BREVE" };
   if (trimmed.length > 60) return { ok: false, reason: "INPUT TROPPO LUNGO" };
-  if (!/^[a-zA-ZàèéìòùÀÈÉÌÒÙ' ]+$/.test(trimmed))
+  if (!/^[a-zA-ZàèéìòùÀÈÉÌÒÙ',. ]+$/.test(trimmed))
     return { ok: false, reason: "CARATTERI NON AMMESSI" };
   // detect mash: 4+ consonanti consecutive senza vocali
   if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(trimmed))
