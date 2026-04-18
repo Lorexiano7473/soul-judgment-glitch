@@ -213,8 +213,15 @@ export default function Index() {
       glitchSfx();
       return;
     }
+    const key = normalize(name);
+    // Trigger minigioco "sale a cascata"
+    if (key === SALT_TRIGGER) {
+      glitchSfx();
+      setStage("salt-game");
+      return;
+    }
     // Trigger secret prompt
-    if (normalize(name) === SECRET_TRIGGER) {
+    if (key === SECRET_TRIGGER) {
       glitchSfx();
       setPassword("");
       setStage("secret-pass");
@@ -225,8 +232,7 @@ export default function Index() {
 
   const handleSecretSubmit = () => {
     if (password === SECRET_PASSWORD) {
-      localStorage.setItem("trofeo_rattesco", "1");
-      setTrophyUnlocked(true);
+      tryUnlock("rattesco");
       // Bonus easter una tantum per il segreto
       const res = earnFromName("__secret_capoziello__", true);
       if (res.ok) setEarnNotice(`+${res.amount} COIN — BONUS SEGRETO`);
@@ -252,6 +258,9 @@ export default function Index() {
     setError(null);
     setVerdict(null);
     setStage("home");
+    // Eterno Ritorno: ogni volta che si torna al menu
+    const n = bumpMenuReturn();
+    if (n > ETERNAL_THRESHOLD) tryUnlock("eterno_ritorno");
   };
 
   const containerCls = useMemo(
