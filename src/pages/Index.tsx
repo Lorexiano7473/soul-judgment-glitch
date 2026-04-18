@@ -13,12 +13,26 @@ import {
   getVerdict,
   isValidName,
   normalize,
+  SALT_TRIGGER,
   SECRET_PASSWORD,
   SECRET_TRIGGER,
   type Verdict,
 } from "@/lib/judgments";
 import { glitchSfx, jumpScare, typeSfx } from "@/lib/audio";
 import { Trophy } from "lucide-react";
+import {
+  TROPHIES,
+  type TrophyId,
+  bumpMenuReturn,
+  bumpTitleClicks,
+  ETERNAL_THRESHOLD,
+  TITLE_CLICKS_THRESHOLD,
+  getUnlocked,
+  resetTitleClicks,
+  unlockTrophy,
+} from "@/lib/trophies";
+import { hapticTrophy, hapticGlitch } from "@/lib/haptics";
+import SaltGame from "@/components/SaltGame";
 
 type Stage =
   | "home"
@@ -27,7 +41,8 @@ type Stage =
   | "secret-pass"
   | "analyzing"
   | "result"
-  | "trophies";
+  | "trophies"
+  | "salt-game";
 
 const ANALYSIS_LINES = [
   "> connessione al soggetto...",
@@ -45,11 +60,10 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [flashWhite, setFlashWhite] = useState(false);
-  const [trophyUnlocked, setTrophyUnlocked] = useState<boolean>(() => {
-    return localStorage.getItem("trofeo_rattesco") === "1";
-  });
+  const [unlockedTrophies, setUnlockedTrophies] = useState<Set<TrophyId>>(() => getUnlocked());
   const [logIndex, setLogIndex] = useState(0);
   const [earnNotice, setEarnNotice] = useState<string | null>(null);
+  const [trophyNotice, setTrophyNotice] = useState<string | null>(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState<boolean>(
     () => localStorage.getItem("disclaimer_accepted") === "1"
@@ -57,6 +71,32 @@ export default function Index() {
   const [pendingEnter, setPendingEnter] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { coins, earnFromName, spend, addCoins, setCoins } = useCoins();
+
+  const trophyUnlocked = unlockedTrophies.size > 0;
+
+  const tryUnlock = (id: TrophyId) => {
+    if (unlockTrophy(id)) {
+      setUnlockedTrophies(getUnlocked());
+      const def = TROPHIES.find((t) => t.id === id);
+      setTrophyNotice(`★ TROFEO: ${def?.name.toUpperCase()} ★`);
+      hapticTrophy();
+      glitchSfx();
+      setTimeout(() => setTrophyNotice(null), 2600);
+      return true;
+    }
+    return false;
+  };
+
+  const handleTitleClick = () => {
+    const n = bumpTitleClicks();
+    if (n >= TITLE_CLICKS_THRESHOLD) {
+      resetTitleClicks();
+      tryUnlock("occhio_glitch");
+      setFlashWhite(true);
+      setTimeout(() => setFlashWhite(false), 100);
+      hapticGlitch();
+    }
+  };
 
   // SEO
   useEffect(() => {
