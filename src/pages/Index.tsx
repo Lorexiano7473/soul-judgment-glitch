@@ -684,6 +684,18 @@ export default function Index() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Salt minigame fullscreen */}
+      <AnimatePresence>
+        {stage === "salt-game" && (
+          <SaltGame
+            key="salt"
+            onClose={reset}
+            onWin={() => tryUnlock("sale_cazzo_di_cane")}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }
+
