@@ -87,17 +87,12 @@
 }
 
 /* Mobile / low-power performance overrides:
-   disable heavy filters, blurs, and continuous glitch animations on small screens
-   and for users who prefer reduced motion. */
+   keep glitch/tremor effects but only via GPU-accelerated transforms.
+   Disable heavy paint effects: grain, scanlines, blur filters. */
 @media (max-width: 768px), (prefers-reduced-motion: reduce) {
   .grain::before { display: none !important; }
   .scanlines::after { display: none !important; }
   .vignette { box-shadow: inset 0 0 80px 20px hsla(0,0%,0%,0.85); }
-  .glitch-text::before,
-  .glitch-text::after { animation: none !important; display: none !important; }
-  .glitch-intense { animation: none !important; }
-  .text-tremor { animation: none !important; }
-  .flicker { animation: none !important; }
   .backdrop-blur-sm,
   .backdrop-blur,
   .backdrop-blur-md,
@@ -106,6 +101,18 @@
     box-shadow: 0 0 8px hsl(var(--blood) / 0.3) inset;
     text-shadow: 0 0 4px hsl(var(--blood-glow) / 0.5);
   }
+}
+
+/* Hardware-accelerated glitch/tremor — transform-only, safe on mobile */
+.glitch-text,
+.glitch-text::before,
+.glitch-text::after,
+.glitch-intense,
+.text-tremor,
+.flicker {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 @layer components {
