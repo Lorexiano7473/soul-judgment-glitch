@@ -70,7 +70,7 @@ export interface DeterministicVerdict {
 }
 
 export function deterministicVerdict(rawName: string): DeterministicVerdict {
-  const key = normalize(rawName);
+  const key = normalizeLocal(rawName);
   const h = hashString(key || "anonimo");
   const score = h % 11; // 0-10
   const band = bandFor(score);
