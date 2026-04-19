@@ -189,12 +189,19 @@ export default function HintsButton({
                 </AnimatePresence>
               </div>
 
-              <div className="mt-4 text-right">
+              <div className="mt-4 flex justify-between items-center">
                 <button
                   onClick={() => setOpen(false)}
                   className="font-typewriter text-xs text-muted-foreground hover:text-blood underline"
                 >
-                  chiudi
+                  ← indietro
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Chiudi"
+                  className="w-9 h-9 flex items-center justify-center border border-ash/60 text-muted-foreground hover:text-blood hover:border-blood"
+                >
+                  ✕
                 </button>
               </div>
             </motion.div>
