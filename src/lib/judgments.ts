@@ -143,37 +143,47 @@ const CRYPTIC_COMMENTS = [
 ];
 
 export function normalize(s: string) {
-  // sostituisce virgole/punti/separatori con spazio per matchare i trigger multi-nome
+  // Rimuove accenti, sostituisce qualunque non-lettera con spazio,
+  // collassa spazi multipli. Garantisce matching robusto per gli easter egg.
   return s
     .trim()
     .toLowerCase()
-    .replace(/[,;./|]+/g, " ")
-    .replace(/\s+/g, " ");
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 // Trigger parziali: se il nome contiene una di queste parole-chiave,
 // restituisce il verdetto associato. Permette match flessibile tipo
 // "molteni" da solo, "ciao maria", "sbattere tutto", ecc.
 const PARTIAL_TRIGGERS: Array<{ words: string[]; key: string }> = [
-  { words: ["molteni", "sbattere", "trattoria"], key: "molteni sbattere trattoria" },
-  { words: ["maria", "prizepool", "moltrasio", "puttana"], key: "maria prizepool puttana moltrasio" },
+  { words: ["molteni", "sbattere", "trattoria", "chad"], key: "molteni sbattere trattoria" },
+  { words: ["maria", "prizepool", "moltrasio", "puttana", "disonesta"], key: "maria prizepool puttana moltrasio" },
 ];
 
 export function findFixedVerdict(rawName: string): Verdict | null {
   const key = normalize(rawName);
+  if (!key) return null;
   // 1) match esatto
   if (FIXED_JUDGMENTS[key]) return FIXED_JUDGMENTS[key];
-  // 2) match parziale per parole-chiave
   const tokens = key.split(" ").filter(Boolean);
+  // 2) match parziale per parole-chiave (anche substring)
   for (const trig of PARTIAL_TRIGGERS) {
-    if (tokens.some((t) => trig.words.includes(t))) {
+    const hit = tokens.some((t) => trig.words.some((w) => t === w || t.includes(w) || w.includes(t)));
+    if (hit) {
+      console.log("[judgments] partial trigger hit:", trig.key, "from tokens:", tokens);
       return FIXED_JUDGMENTS[trig.key] ?? null;
     }
   }
   // 3) match diretto su singola chiave fissa contenuta nei token
   for (const fixedKey of Object.keys(FIXED_JUDGMENTS)) {
-    if (fixedKey.includes(" ")) continue; // multi-parola già gestiti sopra
-    if (tokens.includes(fixedKey)) return FIXED_JUDGMENTS[fixedKey];
+    if (fixedKey.includes(" ")) continue;
+    if (tokens.includes(fixedKey)) {
+      console.log("[judgments] single-key match:", fixedKey);
+      return FIXED_JUDGMENTS[fixedKey];
+    }
   }
   return null;
 }
