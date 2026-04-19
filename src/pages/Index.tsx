@@ -74,6 +74,8 @@ export default function Index() {
     () => localStorage.getItem("disclaimer_accepted") === "1"
   );
   const [pendingEnter, setPendingEnter] = useState(false);
+  const [showChangelog, setShowChangelog] = useState<boolean>(() => shouldShowChangelog());
+  const [discovered, setDiscovered] = useState<Set<string>>(() => getDiscovered());
   const inputRef = useRef<HTMLInputElement>(null);
   const { coins, earnFromName, spend, addCoins, setCoins } = useCoins();
 
@@ -218,6 +220,8 @@ export default function Index() {
     // PRIORITÀ ASSOLUTA: trigger speciali bypassano la validazione
     if (isSaltTrigger(key)) {
       console.log("[Giudizio] SALT trigger riconosciuto → apro minigioco");
+      recordDiscovery(name);
+      setDiscovered(getDiscovered());
       glitchSfx();
       setStage("salt-game");
       return;
@@ -231,6 +235,11 @@ export default function Index() {
     }
     if (findFixedVerdict(name)) {
       console.log("[Giudizio] Easter egg fisso riconosciuto per:", key);
+      const newId = recordDiscovery(name);
+      if (newId) {
+        setDiscovered(getDiscovered());
+        hapticGlitch();
+      }
       setStage("analyzing");
       return;
     }
