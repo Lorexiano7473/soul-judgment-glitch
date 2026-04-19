@@ -225,8 +225,8 @@ export default function Index() {
       setStage("secret-pass");
       return;
     }
-    if (FIXED_JUDGMENTS[key]) {
-      console.log("[Giudizio] Easter egg fisso riconosciuto:", key);
+    if (findFixedVerdict(name)) {
+      console.log("[Giudizio] Easter egg fisso riconosciuto per:", key);
       setStage("analyzing");
       return;
     }
