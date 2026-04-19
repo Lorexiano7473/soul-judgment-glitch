@@ -297,11 +297,20 @@ export default function Index() {
 
   return (
     <main className={containerCls}>
+      <UpdateBanner />
       <MuteButton />
       <CoinCounter value={coins} />
       {stage === "home" && (
         <HintsButton coins={coins} onSpend={(amt) => spend(amt)} />
       )}
+
+      <ChangelogModal
+        open={showChangelog}
+        onClose={() => {
+          markChangelogSeen();
+          setShowChangelog(false);
+        }}
+      />
 
       <DisclaimerModal
         open={showDisclaimer}
@@ -410,17 +419,25 @@ export default function Index() {
               </div>
 
               <p className="mt-12 font-typewriter text-xs text-muted-foreground/60">
-                v0.8.0 — sessione monitorata
+                v{APP_VERSION} — sessione monitorata
                 <br />
                 Diritti riservati a Lorexiano
               </p>
 
-              <button
-                onClick={() => setShowDisclaimer(true)}
-                className="mt-4 inline-flex items-center gap-2 font-typewriter text-[11px] text-muted-foreground/70 hover:text-blood underline-offset-4 hover:underline transition-colors"
-              >
-                <ScrollText size={12} /> Note Legali
-              </button>
+              <div className="mt-3 flex justify-center gap-3">
+                <button
+                  onClick={() => setShowChangelog(true)}
+                  className="font-typewriter text-[11px] text-muted-foreground/70 hover:text-blood underline-offset-4 hover:underline"
+                >
+                  changelog
+                </button>
+                <button
+                  onClick={() => setShowDisclaimer(true)}
+                  className="inline-flex items-center gap-2 font-typewriter text-[11px] text-muted-foreground/70 hover:text-blood underline-offset-4 hover:underline transition-colors"
+                >
+                  <ScrollText size={12} /> Note Legali
+                </button>
+              </div>
             </motion.section>
           )}
 
