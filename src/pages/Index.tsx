@@ -6,7 +6,9 @@ import GlitchTitle from "@/components/GlitchTitle";
 import CoinCounter from "@/components/CoinCounter";
 import SlotMachine from "@/components/SlotMachine";
 import DisclaimerModal from "@/components/DisclaimerModal";
-import { ScrollText } from "lucide-react";
+import ChangelogModal from "@/components/ChangelogModal";
+import UpdateBanner from "@/components/UpdateBanner";
+import { ScrollText, X, ArrowLeft } from "lucide-react";
 import { useCoins } from "@/hooks/useCoins";
 import {
   FIXED_JUDGMENTS,
@@ -34,6 +36,8 @@ import {
 } from "@/lib/trophies";
 import { hapticTrophy, hapticGlitch } from "@/lib/haptics";
 import SaltGame from "@/components/SaltGame";
+import { APP_VERSION, shouldShowChangelog, markChangelogSeen } from "@/lib/version";
+import { GLITCH_CATALOG, getDiscovered, recordDiscovery } from "@/lib/glitch-archive";
 
 type Stage =
   | "home"
