@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Soul Judgment</string>
+    <string name="title_activity_main">Soul Judgment</string>
+    <string name="package_name">com.souljudgment.app</string>
+    <string name="custom_url_scheme">com.souljudgment.app</string>
+</resources>
