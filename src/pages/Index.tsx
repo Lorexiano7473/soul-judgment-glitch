@@ -677,46 +677,91 @@ export default function Index() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="w-full max-w-2xl"
+              className="w-full max-w-2xl relative"
             >
+              {/* Top bar con Back e X */}
+              <div className="sticky top-0 z-10 flex items-center justify-between mb-3 bg-black/80 backdrop-blur-sm py-2">
+                <button
+                  onClick={reset}
+                  className="inline-flex items-center gap-1 font-mono-h text-xs text-muted-foreground hover:text-blood"
+                  aria-label="Indietro"
+                >
+                  <ArrowLeft size={14} /> indietro
+                </button>
+                <button
+                  onClick={reset}
+                  className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-blood border border-ash/40"
+                  aria-label="Chiudi"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
               <h2 className="font-creepster text-4xl sm:text-6xl text-blood mb-2 text-center">
                 <GlitchTitle text="BACHECA DEI PECCATI" />
               </h2>
-              <p className="font-mono-h text-xs text-muted-foreground text-center mb-8">
+              <p className="font-mono-h text-xs text-muted-foreground text-center mb-6">
                 &gt; {unlockedTrophies.size} / {TROPHIES.length} sbloccati
               </p>
-              <div className="grid gap-4">
-                {TROPHIES.map((t) => {
-                  const got = unlockedTrophies.has(t.id);
-                  return (
-                    <div
-                      key={t.id}
-                      className={`border p-5 flex items-start gap-4 transition-colors ${
-                        got
-                          ? "border-blood bg-black/80"
-                          : "border-ash/40 bg-black/60 opacity-60"
-                      }`}
-                    >
-                      <div className={got ? "text-blood" : "text-ash"}>
-                        <Trophy size={40} />
+
+              {/* Lista scrollabile su mobile */}
+              <div className="max-h-[60vh] overflow-y-auto pr-1 -mr-1 space-y-4" style={{ WebkitOverflowScrolling: "touch" }}>
+                <div className="grid gap-4">
+                  {TROPHIES.map((t) => {
+                    const got = unlockedTrophies.has(t.id);
+                    return (
+                      <div
+                        key={t.id}
+                        className={`border p-5 flex items-start gap-4 transition-colors ${
+                          got ? "border-blood bg-black/80" : "border-ash/40 bg-black/60 opacity-60"
+                        }`}
+                      >
+                        <div className={got ? "text-blood" : "text-ash"}>
+                          <Trophy size={40} />
+                        </div>
+                        <div>
+                          <h3 className={`font-creepster text-2xl mb-1 ${got ? "text-blood" : "text-ash"}`}>
+                            {got ? t.name : "??? bloccato ???"}
+                          </h3>
+                          <p className="font-typewriter text-sm text-muted-foreground">
+                            {got ? t.description : "Trofeo non ancora sbloccato. Continua a peccare."}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3
-                          className={`font-creepster text-2xl mb-1 ${
-                            got ? "text-blood" : "text-ash"
-                          }`}
+                    );
+                  })}
+                </div>
+
+                {/* ARCHIVIO GLITCH */}
+                <div className="mt-8">
+                  <h3 className="font-creepster text-2xl sm:text-3xl text-blood mb-1 text-center">
+                    ARCHIVIO GLITCH
+                  </h3>
+                  <p className="font-mono-h text-[11px] text-muted-foreground text-center mb-4">
+                    &gt; {discovered.size} / {GLITCH_CATALOG.length} easter egg testuali scoperti
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {GLITCH_CATALOG.map((g) => {
+                      const got = discovered.has(g.id);
+                      return (
+                        <div
+                          key={g.id}
+                          className={`border p-3 ${got ? "border-blood bg-black/80" : "border-ash/30 bg-black/50"}`}
                         >
-                          {got ? t.name : "??? bloccato ???"}
-                        </h3>
-                        <p className="font-typewriter text-sm text-muted-foreground">
-                          {got ? t.description : "Trofeo non ancora sbloccato. Continua a peccare."}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+                          <p className={`font-creepster text-lg ${got ? "text-blood" : "text-ash"}`}>
+                            {got ? g.name : "???"}
+                          </p>
+                          <p className="font-typewriter text-xs text-muted-foreground italic">
+                            {got ? "scoperto" : g.hint}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-              <div className="mt-8 text-center">
+
+              <div className="mt-6 text-center">
                 <button onClick={reset} className="btn-horror">
                   Indietro
                 </button>
