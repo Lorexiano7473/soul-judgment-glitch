@@ -1,5 +1,14 @@
 // Algoritmo deterministico: stesso nome → stesso voto e commento serio.
-import { normalize } from "./judgments";
+function normalizeLocal(s: string): string {
+  return s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 // Hash stringa → uint32 (FNV-1a)
 export function hashString(s: string): number {

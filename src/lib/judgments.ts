@@ -188,13 +188,11 @@ export function findFixedVerdict(rawName: string): Verdict | null {
   return null;
 }
 
+import { deterministicVerdict } from "./hash-judgment";
+
 export function getVerdict(rawName: string): Verdict {
   const fixed = findFixedVerdict(rawName);
   if (fixed) return fixed;
-  // Deterministico: stesso nome → sempre stesso voto + commento serio.
-  // Import dinamico locale per evitare cicli.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { deterministicVerdict } = require("./hash-judgment") as typeof import("./hash-judgment");
   const det = deterministicVerdict(rawName);
   return { rating: det.rating, comment: det.comment, intense: det.intense };
 }
