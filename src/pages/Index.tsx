@@ -145,7 +145,7 @@ export default function Index() {
       setVerdict(v);
       // Assegna coin
       const key = normalize(name);
-      const isEaster = !!FIXED_JUDGMENTS[key];
+      const isEaster = !!findFixedVerdict(name);
       const res = earnFromName(key, isEaster);
       if (res.ok) {
         setEarnNotice(
