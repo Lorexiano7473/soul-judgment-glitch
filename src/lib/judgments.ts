@@ -191,9 +191,12 @@ export function findFixedVerdict(rawName: string): Verdict | null {
 export function getVerdict(rawName: string): Verdict {
   const fixed = findFixedVerdict(rawName);
   if (fixed) return fixed;
-  const rating = Math.floor(Math.random() * 10) + 1;
-  const comment = CRYPTIC_COMMENTS[Math.floor(Math.random() * CRYPTIC_COMMENTS.length)];
-  return { rating: `${rating}/10`, comment };
+  // Deterministico: stesso nome → sempre stesso voto + commento serio.
+  // Import dinamico locale per evitare cicli.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { deterministicVerdict } = require("./hash-judgment") as typeof import("./hash-judgment");
+  const det = deterministicVerdict(rawName);
+  return { rating: det.rating, comment: det.comment, intense: det.intense };
 }
 
 // Validazione: solo lettere, spazi, apostrofi; non sequenze di tasti casuali (es. "asdfgh")
