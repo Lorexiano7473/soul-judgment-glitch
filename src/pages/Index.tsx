@@ -10,6 +10,7 @@ import { ScrollText } from "lucide-react";
 import { useCoins } from "@/hooks/useCoins";
 import {
   FIXED_JUDGMENTS,
+  findFixedVerdict,
   getVerdict,
   isValidName,
   normalize,
