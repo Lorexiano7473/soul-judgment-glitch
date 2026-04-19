@@ -9,6 +9,12 @@ const HINTS = [
   "Chi teme la finanza e dà sempre la colpa al Matchup?",
   "Cerca chi parla troppo, mangia troppo e non avrà mai una moglie sopra gli 80kg.",
   "Il codice è nascosto nel brainrot di un piccolo numero... 67, centra con i counter della Antonella.",
+  "Il Chad delle trattorie sbatte tutto e non gliene frega niente. Cerca il suo cognome.",
+  "Settembre 2025: una donna è arrivata con scarpe ballerine e un sito disonesto. Pensa a un 'prizepool'.",
+  "Se versi qualcosa a cascata sopra una pentola, qualcosa di bianco accadrà...",
+  "La pasta non si riprenderà mai se aggiungi sale alla cazzo di cane.",
+  "Sette tocchi sul titolo aprono una crepa nella realtà.",
+  "Torna al menu più di cinque volte e qualcosa noterà che non riesci ad andartene.",
 ];
 
 const SPIN_COST = 30;
@@ -183,12 +189,19 @@ export default function HintsButton({
                 </AnimatePresence>
               </div>
 
-              <div className="mt-4 text-right">
+              <div className="mt-4 flex justify-between items-center">
                 <button
                   onClick={() => setOpen(false)}
                   className="font-typewriter text-xs text-muted-foreground hover:text-blood underline"
                 >
-                  chiudi
+                  ← indietro
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Chiudi"
+                  className="w-9 h-9 flex items-center justify-center border border-ash/60 text-muted-foreground hover:text-blood hover:border-blood"
+                >
+                  ✕
                 </button>
               </div>
             </motion.div>

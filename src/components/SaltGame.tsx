@@ -146,13 +146,14 @@ export default function SaltGame({ onClose, onWin }: Props) {
           />
         </div>
 
-        {/* Close */}
+        {/* Close (X grande mobile-friendly) */}
         {!won && (
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 font-mono-h text-xs text-muted-foreground hover:text-blood underline"
+            aria-label="Chiudi minigioco"
+            className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center border border-ash/60 bg-black/80 text-muted-foreground hover:text-blood hover:border-blood"
           >
-            esci
+            ✕
           </button>
         )}
       </div>

@@ -188,12 +188,13 @@ export function findFixedVerdict(rawName: string): Verdict | null {
   return null;
 }
 
+import { deterministicVerdict } from "./hash-judgment";
+
 export function getVerdict(rawName: string): Verdict {
   const fixed = findFixedVerdict(rawName);
   if (fixed) return fixed;
-  const rating = Math.floor(Math.random() * 10) + 1;
-  const comment = CRYPTIC_COMMENTS[Math.floor(Math.random() * CRYPTIC_COMMENTS.length)];
-  return { rating: `${rating}/10`, comment };
+  const det = deterministicVerdict(rawName);
+  return { rating: det.rating, comment: det.comment, intense: det.intense };
 }
 
 // Validazione: solo lettere, spazi, apostrofi; non sequenze di tasti casuali (es. "asdfgh")
