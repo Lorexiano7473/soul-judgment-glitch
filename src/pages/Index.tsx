@@ -10,6 +10,7 @@ import { ScrollText } from "lucide-react";
 import { useCoins } from "@/hooks/useCoins";
 import {
   FIXED_JUDGMENTS,
+  findFixedVerdict,
   getVerdict,
   isValidName,
   normalize,
@@ -144,7 +145,7 @@ export default function Index() {
       setVerdict(v);
       // Assegna coin
       const key = normalize(name);
-      const isEaster = !!FIXED_JUDGMENTS[key];
+      const isEaster = !!findFixedVerdict(name);
       const res = earnFromName(key, isEaster);
       if (res.ok) {
         setEarnNotice(
@@ -224,8 +225,8 @@ export default function Index() {
       setStage("secret-pass");
       return;
     }
-    if (FIXED_JUDGMENTS[key]) {
-      console.log("[Giudizio] Easter egg fisso riconosciuto:", key);
+    if (findFixedVerdict(name)) {
+      console.log("[Giudizio] Easter egg fisso riconosciuto per:", key);
       setStage("analyzing");
       return;
     }

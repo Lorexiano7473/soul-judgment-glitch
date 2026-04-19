@@ -151,9 +151,35 @@ export function normalize(s: string) {
     .replace(/\s+/g, " ");
 }
 
-export function getVerdict(rawName: string): Verdict {
+// Trigger parziali: se il nome contiene una di queste parole-chiave,
+// restituisce il verdetto associato. Permette match flessibile tipo
+// "molteni" da solo, "ciao maria", "sbattere tutto", ecc.
+const PARTIAL_TRIGGERS: Array<{ words: string[]; key: string }> = [
+  { words: ["molteni", "sbattere", "trattoria"], key: "molteni sbattere trattoria" },
+  { words: ["maria", "prizepool", "moltrasio", "puttana"], key: "maria prizepool puttana moltrasio" },
+];
+
+export function findFixedVerdict(rawName: string): Verdict | null {
   const key = normalize(rawName);
-  const fixed = FIXED_JUDGMENTS[key];
+  // 1) match esatto
+  if (FIXED_JUDGMENTS[key]) return FIXED_JUDGMENTS[key];
+  // 2) match parziale per parole-chiave
+  const tokens = key.split(" ").filter(Boolean);
+  for (const trig of PARTIAL_TRIGGERS) {
+    if (tokens.some((t) => trig.words.includes(t))) {
+      return FIXED_JUDGMENTS[trig.key] ?? null;
+    }
+  }
+  // 3) match diretto su singola chiave fissa contenuta nei token
+  for (const fixedKey of Object.keys(FIXED_JUDGMENTS)) {
+    if (fixedKey.includes(" ")) continue; // multi-parola già gestiti sopra
+    if (tokens.includes(fixedKey)) return FIXED_JUDGMENTS[fixedKey];
+  }
+  return null;
+}
+
+export function getVerdict(rawName: string): Verdict {
+  const fixed = findFixedVerdict(rawName);
   if (fixed) return fixed;
   const rating = Math.floor(Math.random() * 10) + 1;
   const comment = CRYPTIC_COMMENTS[Math.floor(Math.random() * CRYPTIC_COMMENTS.length)];
