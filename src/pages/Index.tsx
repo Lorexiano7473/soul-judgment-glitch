@@ -418,6 +418,16 @@ export default function Index() {
                     <Trophy size={16} /> BACHECA DEI PECCATI [{unlockedTrophies.size}/{TROPHIES.length}]
                   </motion.button>
                 )}
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={() => setStage("shop")}
+                  aria-label="Apri L'Antiquariato delle Anime"
+                  title="L'Antiquariato delle Anime"
+                  className="inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors glitch-intense"
+                >
+                  <ShoppingBag size={16} /> ANTIQUARIATO
+                </motion.button>
               </div>
 
               <p className="mt-12 font-typewriter text-xs text-muted-foreground/60">
@@ -780,6 +790,18 @@ export default function Index() {
             key="salt"
             onClose={reset}
             onWin={() => tryUnlock("sale_cazzo_di_cane")}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Shop fullscreen */}
+      <AnimatePresence>
+        {stage === "shop" && (
+          <Shop
+            key="shop"
+            coins={coins}
+            spend={spend}
+            onClose={reset}
           />
         )}
       </AnimatePresence>
