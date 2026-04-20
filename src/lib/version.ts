@@ -1,5 +1,5 @@
 // Versioning, changelog e update checker
-export const APP_VERSION = "1.1.0";
+export const APP_VERSION = "1.2.0";
 
 // URL del manifest remoto (placeholder GitHub raw — l'utente lo sostituirà)
 export const REMOTE_MANIFEST_URL =
@@ -17,6 +17,16 @@ export interface ChangelogEntry {
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: "1.2.0",
+    date: "2026-04",
+    items: [
+      "🛒 Aggiunto lo Shop dell'Antiquariato delle Anime",
+      "🎵 Nuova musica d'atmosfera nel negozio",
+      "👁 Grafica del Negoziante Glitch",
+      "💀 Nuovi oggetti maledetti acquistabili con Soul Coins",
+    ],
+  },
   {
     version: "1.1.0",
     date: "2026-04",
