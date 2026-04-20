@@ -39,6 +39,7 @@ import SaltGame from "@/components/SaltGame";
 import Shop from "@/components/Shop";
 import { APP_VERSION, shouldShowChangelog, markChangelogSeen } from "@/lib/version";
 import { GLITCH_CATALOG, getDiscovered, recordDiscovery } from "@/lib/glitch-archive";
+import { applyTintaAbissale, ownsItem, maybeVoidWhisper } from "@/lib/shop-effects";
 
 type Stage =
   | "home"
@@ -111,6 +112,16 @@ export default function Index() {
   useEffect(() => {
     document.title = "Il Giudizio della Stanza — Verrai Valutato";
   }, []);
+
+  // Applica gli effetti persistenti degli oggetti Shop all'avvio
+  useEffect(() => {
+    applyTintaAbissale(ownsItem("tinta_abissale"));
+  }, []);
+
+  // Sussurro del Vuoto: 5% di chance ad ogni cambio stage (= cambio "pagina")
+  useEffect(() => {
+    maybeVoidWhisper();
+  }, [stage]);
 
   useEffect(() => {
     if (!earnNotice) return;
