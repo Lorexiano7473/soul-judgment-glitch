@@ -7,6 +7,7 @@ import { SHOP_ITEMS, useInventory, type ShopItemId } from "@/hooks/useInventory"
 import { playShopMusic, stopShopMusic } from "@/lib/shop-music";
 import { glitchSfx } from "@/lib/audio";
 import { hapticTrophy } from "@/lib/haptics";
+import { applyTintaAbissale, getCripticHint, voidWhisper } from "@/lib/shop-effects";
 
 interface Props {
   coins: number;
@@ -17,6 +18,7 @@ interface Props {
 export default function Shop({ coins, spend, onClose }: Props) {
   const { isOwned, purchase } = useInventory();
   const [notice, setNotice] = useState<string | null>(null);
+  const [hintPopup, setHintPopup] = useState<string | null>(null);
 
   useEffect(() => {
     playShopMusic();
@@ -37,6 +39,15 @@ export default function Shop({ coins, spend, onClose }: Props) {
       glitchSfx();
       setNotice(`ACQUISTATO: ${name.toUpperCase()}`);
       setTimeout(() => setNotice(null), 2200);
+      // Effetti specifici per oggetto
+      if (id === "tinta_abissale") {
+        applyTintaAbissale(true);
+      } else if (id === "eco_criptico") {
+        setHintPopup(getCripticHint());
+      } else if (id === "sussurro_vuoto") {
+        // Anteprima immediata del nuovo SFX
+        voidWhisper();
+      }
     }
   };
 
@@ -51,7 +62,7 @@ export default function Shop({ coins, spend, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[70] overflow-y-auto bg-black"
+      className="fixed inset-0 z-[70] overflow-y-auto bg-black shop-scanlines"
       style={{ WebkitOverflowScrolling: "touch" }}
     >
       {/* Top bar */}

@@ -1,5 +1,5 @@
 // Versioning, changelog e update checker
-export const APP_VERSION = "1.2.0";
+export const APP_VERSION = "1.2.1";
 
 // Repo ufficiale
 export const GITHUB_REPO = "Lorexiano7473/soul-judgment-glitch";
@@ -18,6 +18,15 @@ export interface ChangelogEntry {
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: "1.2.1",
+    date: "2026-04",
+    items: [
+      "✨ Effetti reali oggetti Shop (Tinta Abissale, Eco Criptico, Sussurro del Vuoto)",
+      "📺 Effetto Scanline TV nello Shop",
+      "🔁 Update Checker collegato al GitHub ufficiale",
+    ],
+  },
   {
     version: "1.2.0",
     date: "2026-04",
