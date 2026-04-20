@@ -306,3 +306,44 @@
   animation: salt-fall var(--dur,1s) linear forwards;
   will-change: transform, opacity;
 }
+
+/* === Shop scanline (vecchio monitor TV) === */
+@keyframes shop-scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+.shop-scanlines {
+  position: relative;
+}
+.shop-scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    hsla(0, 80%, 20%, 0.18) 3px,
+    hsla(0, 0%, 0%, 0.28) 4px
+  );
+  mix-blend-mode: multiply;
+}
+.shop-scanlines::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 80px;
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsla(0, 100%, 50%, 0.06) 45%,
+    hsla(0, 100%, 60%, 0.12) 50%,
+    hsla(0, 100%, 50%, 0.06) 55%,
+    transparent 100%
+  );
+  animation: shop-scan 6s linear infinite;
+}
