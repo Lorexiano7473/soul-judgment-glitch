@@ -307,42 +307,39 @@
   will-change: transform, opacity;
 }
 
-/* === Shop scanline (vecchio monitor TV) === */
+/* === Shop scanline overlay (vecchio monitor TV) ===
+   Overlay separato in posizione fixed con pointer-events:none,
+   così non copre né intercetta il contenuto dello Shop. */
 @keyframes shop-scan {
-  0%   { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+  0%   { transform: translateY(-120px); }
+  100% { transform: translateY(100vh); }
 }
-.shop-scanlines {
-  position: relative;
-}
-.shop-scanlines::before {
-  content: '';
-  position: absolute;
+.shop-scanline-overlay {
+  position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 9999;
+  overflow: hidden;
   background: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent 2px,
-    hsla(0, 80%, 20%, 0.18) 3px,
-    hsla(0, 0%, 0%, 0.28) 4px
+    hsla(0, 0%, 0%, 0.22) 3px,
+    hsla(0, 0%, 0%, 0.22) 4px
   );
-  mix-blend-mode: multiply;
 }
-.shop-scanlines::after {
+.shop-scanline-overlay::after {
   content: '';
   position: absolute;
   left: 0; right: 0;
-  height: 80px;
-  pointer-events: none;
-  z-index: 6;
+  top: 0;
+  height: 100px;
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    hsla(0, 100%, 50%, 0.06) 45%,
-    hsla(0, 100%, 60%, 0.12) 50%,
-    hsla(0, 100%, 50%, 0.06) 55%,
+    hsla(0, 100%, 50%, 0.05) 45%,
+    hsla(0, 100%, 60%, 0.10) 50%,
+    hsla(0, 100%, 50%, 0.05) 55%,
     transparent 100%
   );
   animation: shop-scan 6s linear infinite;
