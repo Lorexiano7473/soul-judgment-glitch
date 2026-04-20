@@ -1,11 +1,12 @@
 // Versioning, changelog e update checker
 export const APP_VERSION = "1.2.0";
 
-// URL del manifest remoto (placeholder GitHub raw — l'utente lo sostituirà)
-export const REMOTE_MANIFEST_URL =
-  "https://raw.githubusercontent.com/lorexiano/giudizio-stanza/main/version.json";
-// Link al GitHub di rilascio (placeholder)
-export const GITHUB_RELEASES_URL = "https://github.com/lorexiano/giudizio-stanza/releases";
+// Repo ufficiale
+export const GITHUB_REPO = "Lorexiano7473/soul-judgment-glitch";
+// Manifest remoto: usiamo l'API GitHub Releases (latest) — niente file da mantenere a mano
+export const REMOTE_MANIFEST_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+// Link alla pagina delle releases
+export const GITHUB_RELEASES_URL = `https://github.com/${GITHUB_REPO}/releases`;
 
 const VERSION_KEY = "app_version_seen";
 const CHANGELOG_DISMISSED_KEY = "changelog_dismissed_for";
@@ -87,13 +88,22 @@ export async function checkForUpdate(): Promise<{
   try {
     const res = await fetch(REMOTE_MANIFEST_URL, { cache: "no-store" });
     if (!res.ok) return { hasUpdate: false };
-    const data = (await res.json()) as { version?: string; url?: string };
-    if (!data.version) return { hasUpdate: false };
-    const cmp = compareVersions(data.version, APP_VERSION);
+    const data = (await res.json()) as {
+      tag_name?: string;
+      name?: string;
+      html_url?: string;
+      version?: string;
+      url?: string;
+    };
+    // Supporta sia GitHub Releases (tag_name tipo "v1.2.0") sia un manifest custom { version, url }
+    const rawTag = data.tag_name || data.name || data.version;
+    if (!rawTag) return { hasUpdate: false };
+    const remoteVersion = rawTag.replace(/^v/i, "").trim();
+    const cmp = compareVersions(remoteVersion, APP_VERSION);
     return {
       hasUpdate: cmp > 0,
-      remoteVersion: data.version,
-      url: data.url || GITHUB_RELEASES_URL,
+      remoteVersion,
+      url: data.html_url || data.url || GITHUB_RELEASES_URL,
     };
   } catch {
     return { hasUpdate: false };
