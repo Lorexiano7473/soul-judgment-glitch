@@ -8,7 +8,7 @@ import SlotMachine from "@/components/SlotMachine";
 import DisclaimerModal from "@/components/DisclaimerModal";
 import ChangelogModal from "@/components/ChangelogModal";
 import UpdateBanner from "@/components/UpdateBanner";
-import { ScrollText, X, ArrowLeft } from "lucide-react";
+import { ScrollText, X, ArrowLeft, ShoppingBag } from "lucide-react";
 import { useCoins } from "@/hooks/useCoins";
 import {
   FIXED_JUDGMENTS,
@@ -36,6 +36,7 @@ import {
 } from "@/lib/trophies";
 import { hapticTrophy, hapticGlitch } from "@/lib/haptics";
 import SaltGame from "@/components/SaltGame";
+import Shop from "@/components/Shop";
 import { APP_VERSION, shouldShowChangelog, markChangelogSeen } from "@/lib/version";
 import { GLITCH_CATALOG, getDiscovered, recordDiscovery } from "@/lib/glitch-archive";
 
@@ -47,7 +48,8 @@ type Stage =
   | "analyzing"
   | "result"
   | "trophies"
-  | "salt-game";
+  | "salt-game"
+  | "shop";
 
 const ANALYSIS_LINES = [
   "> connessione al soggetto...",
@@ -416,6 +418,16 @@ export default function Index() {
                     <Trophy size={16} /> BACHECA DEI PECCATI [{unlockedTrophies.size}/{TROPHIES.length}]
                   </motion.button>
                 )}
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={() => setStage("shop")}
+                  aria-label="Apri L'Antiquariato delle Anime"
+                  title="L'Antiquariato delle Anime"
+                  className="inline-flex items-center gap-2 font-typewriter text-sm border border-blood text-blood px-4 py-2 hover:bg-blood/20 transition-colors glitch-intense"
+                >
+                  <ShoppingBag size={16} /> ANTIQUARIATO
+                </motion.button>
               </div>
 
               <p className="mt-12 font-typewriter text-xs text-muted-foreground/60">
@@ -778,6 +790,18 @@ export default function Index() {
             key="salt"
             onClose={reset}
             onWin={() => tryUnlock("sale_cazzo_di_cane")}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Shop fullscreen */}
+      <AnimatePresence>
+        {stage === "shop" && (
+          <Shop
+            key="shop"
+            coins={coins}
+            spend={spend}
+            onClose={reset}
           />
         )}
       </AnimatePresence>
