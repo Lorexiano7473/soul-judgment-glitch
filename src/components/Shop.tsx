@@ -62,9 +62,11 @@ export default function Shop({ coins, spend, onClose }: Props) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[70] overflow-y-auto bg-black shop-scanlines"
+      className="fixed inset-0 z-[70] overflow-y-auto bg-black"
       style={{ WebkitOverflowScrolling: "touch" }}
     >
+      {/* Overlay scanline TV — sopra lo Shop ma non intercetta input */}
+      <div className="shop-scanline-overlay" aria-hidden />
       {/* Top bar */}
       <div className="sticky top-0 z-10 flex items-center justify-between bg-black/90 backdrop-blur-sm border-b border-blood/40 px-4 py-3">
         <button
